@@ -1,4 +1,4 @@
-const CACHE_NAME = 'controleasy-v6';
+const CACHE_NAME = 'controleasy-v7';
 const ASSETS = [
   'index.html',
   'manifest.json',
