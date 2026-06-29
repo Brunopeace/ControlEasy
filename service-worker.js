@@ -1,4 +1,4 @@
-const CACHE_NAME = 'controleasy-v14';
+const CACHE_NAME = 'controleasy-v15';
 const ASSETS = [
   'index.html',
   'img/icon-512.png',
