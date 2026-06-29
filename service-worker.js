@@ -1,25 +1,40 @@
-const CACHE_NAME = 'clientes-cache-v1';
-const urlsToCache = [
-  '/',
-  '/css/estilo.css',
-  '/manifest.json',
-  // adicione outros recursos que deseja armazenar em cache
+const CACHE_NAME = 'controleasy-v5';
+const ASSETS = [
+  'index.html',
+  'manifest.json',
+  'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4',
+  'https://unpkg.com/lucide@latest'
 ];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+// Instala o Service Worker e guarda os arquivos no Cache
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
   );
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
+// Ativa e remove caches antigos se houverem
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Serve os arquivos direto do cache quando estiver offline
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((cachedResponse) => {
+      return cachedResponse || fetch(e.request);
+    })
   );
 });
