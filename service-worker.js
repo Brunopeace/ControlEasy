@@ -1,6 +1,8 @@
-const CACHE_NAME = 'controleasy-v7';
+const CACHE_NAME = 'controleasy-v13';
 const ASSETS = [
   'index.html',
+  'img/icon-512.png',
+  'img/icon-192.png',
   'manifest.json',
   'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4',
   'https://unpkg.com/lucide@latest'
