@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gerenciador de Parcelas</title>
+    <title>Gerenciador de Parcelas Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     <link class="manifest" href="manifest.json">
+     
     <style>
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
@@ -166,7 +167,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('✅ Service Worker registrado!', reg.scope))
+                    .then(reg => console.log('Service Worker registrado!', reg.scope))
                     .catch(err => console.log('Erro no Service Worker:', err));
             });
         }
@@ -385,4 +386,4 @@
         renderizar();
     </script>
 </body>
-</html> 
+</html>
