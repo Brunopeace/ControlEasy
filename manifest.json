@@ -1,5 +1,5 @@
 {
-  "name": "ControlEasy - Gerenciador de Parcelas",
+  "name": "Gerenciador de Parcelas",
   "short_name": "ControlEasy",
   "description": "Gerenciador offline de parcelas com salvamento local.",
   "start_url": "/ControlEasy/index.html",
