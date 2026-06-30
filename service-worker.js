@@ -1,11 +1,12 @@
-const CACHE_NAME = 'controleasy-v20';
+const CACHE_NAME = 'controleasy-v21';
 const ASSETS = [
   './',
   'index.html',
   'manifest.json',
   'img/icon-192.png',
   'img/icon-512.png',
-  'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4'
+  'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4',
+  'https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js'
 ];
 
 // Instala o Service Worker e guarda os arquivos no Cache
@@ -41,12 +42,6 @@ self.addEventListener('activate', (e) => {
 
 // Serve os arquivos direto do cache quando estiver offline
 self.addEventListener('fetch', (e) => {
-  // Ignora requisições de CDNs com redirecionamento dinâmico (como unpkg @latest) no cache estático
-  if (e.request.url.includes('unpkg.com')) {
-    e.respondWith(fetch(e.request));
-    return;
-  }
-
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
       return cachedResponse || fetch(e.request);
