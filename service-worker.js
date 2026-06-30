@@ -1,4 +1,4 @@
-const CACHE_NAME = 'controleasy-v24';
+const CACHE_NAME = 'controleasy-v25';
 const ASSETS = [
   './',
   'index.html',
