@@ -1,4 +1,4 @@
-const CACHE_NAME = 'controleasy-v13';
+const CACHE_NAME = 'controleasy-v18';
 const ASSETS = [
   './', // Garante o cache da página inicial no GitHub Pages
   'index.html',
