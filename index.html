@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gerenciador de Parcelas Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     
     <link rel="manifest" href="manifest.json?v=2">
@@ -21,7 +20,6 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        /* Customização elegante da barra de rolagem interna */
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
         }
@@ -66,12 +64,12 @@
                             <p id="total-pagas" class="text-base font-bold text-emerald-400 leading-none mt-0.5">0/12</p>
                         </div>
                     </div>
-                    <div class="glass-card flex-1 sm:flex-none p-2.5 rounded-2xl flex items-center gap-3 px-4">
-                        <div class="p-1.5 bg-amber-500/20 text-amber-400 rounded-xl">
+                    <div onclick="abrirModalRestante()" class="glass-card flex-1 sm:flex-none p-2.5 rounded-2xl flex items-center gap-3 px-4 cursor-pointer hover:border-amber-500/40 transition-all group">
+                        <div class="p-1.5 bg-amber-500/20 text-amber-400 rounded-xl group-hover:scale-105 transition-transform">
                             <i data-lucide="clock" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <p class="text-[10px] text-slate-400 uppercase font-semibold">Restante</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-semibold flex items-center gap-1">Restante <i data-lucide="edit-2" class="w-2.5 h-2.5 opacity-60"></i></p>
                             <p id="valor-restante" class="text-base font-bold text-amber-400 leading-none mt-0.5">R$ 0,00</p>
                         </div>
                     </div>
@@ -84,13 +82,13 @@
                         <i data-lucide="sliders" class="w-4 h-4"></i>
                     </div>
                     <div class="min-w-0">
-                        <h2 class="text-xs font-bold text-slate-200 truncate">Definir quantidade</h2>
-                        <p class="text-[11px] text-slate-400 truncate">Altere o total de parcelas.</p>
+                        <h2 class="text-xs font-bold text-slate-200 truncate">Definir quantidade pendente</h2>
+                        <p class="text-[11px] text-slate-400 truncate">Recalcula o saldo restante na nova quantidade.</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <input type="number" id="input-qtd-parcelas" min="1" max="100" value="12" class="w-14 text-center bg-slate-900/80 border border-slate-700 rounded-xl py-1.5 text-white font-bold text-xs focus:outline-none focus:border-indigo-500">
-                    <button onclick="gerarNovasParcelas()" class="cursor-pointer bg-slate-800 hover:bg-indigo-600 border border-slate-700 hover:border-indigo-500 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1">
+                    <button onclick="gerarNovasParcelas()" class="cursor-pointer bg-indigo-600 hover:bg-indigo-500 border border-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 shadow-lg shadow-indigo-600/20">
                         <i data-lucide="refresh-cw" class="w-3 h-3"></i> Gerar
                     </button>
                 </div>
@@ -109,23 +107,24 @@
 
         <div class="glass-card rounded-2xl p-1.5 border border-slate-800/50 flex-1 min-h-0 flex flex-col">
             <div class="space-y-2.5 overflow-y-auto pr-1.5 custom-scroll p-1.5 flex-1" id="lista-parcelas">
-                </div>
+            </div>
         </div>
 
         <div class="flex justify-end mt-3 shrink-0">
-            <button onclick="resetarDados()" class="text-[11px] text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1 bg-slate-900/30 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-rose-500/20">
+            <button onclick="resetarDados()" class="text-[11px] text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1 bg-slate-900/30 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-rose-500/20 cursor-pointer">
                 <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reiniciar dados
             </button>
         </div>
     </div>
 
+    <!-- Modal Editar Parcela Específica -->
     <div id="modal-edicao" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="glass-card w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-700/60">
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
                     <i data-lucide="edit-3" class="text-indigo-400 w-5 h-5"></i> Editar Parcela <span id="modal-titulo-num" class="text-indigo-300">00</span>
                 </h3>
-                <button onclick="fecharModal()" class="text-slate-400 hover:text-white transition-colors cursor-pointer">
+                <button onclick="fecharModal('modal-edicao')" class="text-slate-400 hover:text-white transition-colors cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -144,11 +143,45 @@
             </div>
 
             <div class="flex gap-3 mt-6">
-                <button onclick="fecharModal()" class="flex-1 cursor-pointer bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all rounded-xl py-2.5 text-sm font-semibold">
+                <button onclick="fecharModal('modal-edicao')" class="flex-1 cursor-pointer bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all rounded-xl py-2.5 text-sm font-semibold">
                     Cancelar
                 </button>
                 <button onclick="salvarEdicao()" class="flex-1 cursor-pointer bg-indigo-600 hover:bg-indigo-500 transition-all text-white rounded-xl py-2.5 text-sm font-semibold shadow-lg shadow-indigo-600/20">
                     Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Valor Restante Total -->
+    <div id="modal-restante" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="glass-card w-full max-w-md rounded-2xl p-6 shadow-2xl border border-amber-500/20">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="coins" class="text-amber-400 w-5 h-5"></i> Recalcular Restante
+                </h3>
+                <button onclick="fecharModal('modal-restante')" class="text-slate-400 hover:text-white transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-400 mb-4">
+                Insira o novo valor restante total. Ele será recalculado e dividido **igualmente entre todas as parcelas pendentes (não pagas)**.
+            </p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-amber-400/90 mb-1.5 uppercase tracking-wider">Novo Valor Restante Total (R$)</label>
+                    <input type="number" step="0.01" id="input-modal-restante" class="w-full bg-slate-900/80 border border-amber-500/30 rounded-xl px-4 py-2.5 text-amber-300 font-bold text-lg focus:outline-none focus:border-amber-400 transition-colors">
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="fecharModal('modal-restante')" class="flex-1 cursor-pointer bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all rounded-xl py-2.5 text-sm font-semibold">
+                    Cancelar
+                </button>
+                <button onclick="salvarNovoRestante()" class="flex-1 cursor-pointer bg-amber-500 hover:bg-amber-400 transition-all text-slate-950 font-bold rounded-xl py-2.5 text-sm shadow-lg shadow-amber-500/20">
+                    Recalcular
                 </button>
             </div>
         </div>
@@ -160,7 +193,6 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Forçamos a atualização do Service Worker (v=2)
                 navigator.serviceWorker.register('service-worker.js?v=2')
                     .then(reg => console.log('✅ Service Worker registrado!', reg.scope))
                     .catch(err => console.log('Erro no Service Worker:', err));
@@ -183,202 +215,327 @@
     </script>
 
     <script>
-        const VALOR_TOTAL_BASE = 3781.10;
+    const VALOR_TOTAL_BASE = 3781.10;
+    let parcelas = [];
 
-        const parcelasIniciais12 = [
-            { numero: 1, valor: 359.92, vencimento: "01/07/2026", pago: false, dataPagamento: null },
-            { numero: 2, valor: 310.66, vencimento: "01/08/2026", pago: false, dataPagamento: null },
-            { numero: 3, valor: 310.66, vencimento: "01/09/2026", pago: false, dataPagamento: null },
-            { numero: 4, valor: 310.66, vencimento: "01/10/2026", pago: false, dataPagamento: null },
-            { numero: 5, valor: 310.66, vencimento: "01/11/2026", pago: false, dataPagamento: null },
-            { numero: 6, valor: 310.66, vencimento: "01/12/2026", pago: false, dataPagamento: null },
-            { numero: 7, valor: 310.66, vencimento: "01/01/2027", pago: false, dataPagamento: null },
-            { numero: 8, valor: 310.66, vencimento: "01/02/2027", pago: false, dataPagamento: null },
-            { numero: 9, valor: 310.66, vencimento: "01/03/2027", pago: false, dataPagamento: null },
-            { numero: 10, valor: 310.66, vencimento: "01/04/2027", pago: false, dataPagamento: null },
-            { numero: 11, valor: 310.66, vencimento: "01/05/2027", pago: false, dataPagamento: null },
-            { numero: 12, valor: 310.76, vencimento: "01/06/2027", pago: false, dataPagamento: null }
-        ];
+    function criarEstruturaInicial(qtd = 12, montanteTotal = VALOR_TOTAL_BASE) {
+        if (montanteTotal <= 0) return [];
+        
+        const novasParcelas = [];
+        const valorCalculado = Math.floor((montanteTotal / qtd) * 100) / 100;
+        let somaAcumulada = 0;
 
-        let parcelas = JSON.parse(localStorage.getItem('app_parcelas')) || parcelasIniciais12;
+        const hoje = new Date();
+        const mesInicial = hoje.getMonth();
+        const anoInicial = hoje.getFullYear();
 
-        function salvarNoStorage() {
-            localStorage.setItem('app_parcelas', JSON.stringify(parcelas));
-        }
-
-        function gerarNovasParcelas() {
-            const qtdInput = parseInt(document.getElementById('input-qtd-parcelas').value);
-            if (isNaN(qtdInput) || qtdInput < 1 || qtdInput > 100) {
-                alert("Digite uma quantidade entre 1 e 100.");
-                return;
-            }
-
-            if (qtdInput === 12) {
-                parcelas = parcelasIniciais12.map(p => ({ ...p, pago: false, dataPagamento: null }));
+        for (let i = 1; i <= qtd; i++) {
+            let valorDaParcela = valorCalculado;
+            if (i === qtd) {
+                valorDaParcela = Math.round((montanteTotal - somaAcumulada) * 100) / 100;
             } else {
-                const novasParcelas = [];
-                const valorCalculado = Math.floor((VALOR_TOTAL_BASE / qtdInput) * 100) / 100;
-                let somaAcumulada = 0;
-
-                for (let i = 1; i <= qtdInput; i++) {
-                    let valorDaParcela = valorCalculado;
-                    if (i === qtdInput) {
-                        valorDaParcela = Math.round((VALOR_TOTAL_BASE - somaAcumulada) * 100) / 100;
-                    } else {
-                        somaAcumulada += valorCalculado;
-                    }
-
-                    let dataVencimento = new Date(2026, 6 + (i - 1), 1);
-                    const dia = String(dataVencimento.getDate()).padStart(2, '0');
-                    const mes = String(dataVencimento.getMonth() + 1).padStart(2, '0');
-                    const ano = dataVencimento.getFullYear();
-
-                    novasParcelas.push({
-                        numero: i,
-                        valor: valorDaParcela,
-                        vencimento: `${dia}/${mes}/${ano}`,
-                        pago: false,
-                        dataPagamento: null
-                    });
-                }
-                parcelas = novasParcelas;
+                somaAcumulada += valorCalculado;
             }
 
+            let dataVencimento = new Date(anoInicial, mesInicial + i, 1);
+            const dia = String(dataVencimento.getDate()).padStart(2, '0');
+            const mes = String(dataVencimento.getMonth() + 1).padStart(2, '0');
+            const ano = dataVencimento.getFullYear();
+
+            novasParcelas.push({
+                numero: i,
+                valor: valorDaParcela,
+                vencimento: `${dia}/${mes}/${ano}`,
+                pago: false,
+                dataPagamento: null
+            });
+        }
+        return novasParcelas;
+    }
+
+    function carregarDadosIniciais() {
+        const dadosSalvos = localStorage.getItem('app_parcelas');
+        if (dadosSalvos) {
+            parcelas = JSON.parse(dadosSalvos);
+        } else {
+            parcelas = [];
+            salvarNoStorage();
+        }
+    }
+
+    function salvarNoStorage() {
+        localStorage.setItem('app_parcelas', JSON.stringify(parcelas));
+    }
+
+    function resetarDados() {
+        if (confirm("Tem certeza de que deseja resetar todas as parcelas e limpar os dados salvos?")) {
+            localStorage.removeItem('app_parcelas');
+            parcelas = [];
             salvarNoStorage();
             renderizar();
         }
+    }
+    
+    function excluirParcela(numero, event) {
+        if (event) event.stopPropagation();
+        if (confirm(`Tem certeza que deseja excluir a parcela ${numero}?`)) {
+            parcelas = parcelas.filter(p => p.numero !== numero);
+            parcelas.forEach((p, idx) => p.numero = idx + 1);
+            salvarNoStorage();
+            renderizar();
+        }
+    }
 
-        function alternarStatus(numero, event) {
-            if (event) event.stopPropagation();
-            const index = parcelas.findIndex(p => p.numero === numero);
-            if (index !== -1) {
-                parcelas[index].pago = !parcelas[index].pago;
-                
-                if (parcelas[index].pago) {
-                    const agora = new Date();
-                    const dia = String(agora.getDate()).padStart(2, '0');
-                    const mes = String(agora.getMonth() + 1).padStart(2, '0');
-                    const ano = agora.getFullYear();
-                    const hora = String(agora.getHours()).padStart(2, '0');
-                    const minuto = String(agora.getMinutes()).padStart(2, '0');
-                    parcelas[index].dataPagamento = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
-                } else {
-                    parcelas[index].dataPagamento = null;
-                }
-
-                salvarNoStorage();
-                renderizar();
-            }
+    // CORREÇÃO: Pede o valor montante caso não haja valor restante acumulado nas parcelas
+    function gerarNovasParcelas() {
+        const qtdInput = parseInt(document.getElementById('input-qtd-parcelas').value);
+        if (isNaN(qtdInput) || qtdInput < 1 || qtdInput > 100) {
+            alert("Digite uma quantidade entre 1 e 100.");
+            return;
         }
 
-        function abrirModal(numero) {
-            const index = parcelas.findIndex(p => p.numero === numero);
-            if (index !== -1) {
-                document.getElementById('modal-index').value = index;
-                document.getElementById('modal-titulo-num').innerText = numero.toString().padStart(2, '0');
-                document.getElementById('modal-valor').value = parcelas[index].valor;
-                document.getElementById('modal-vencimento').value = parcelas[index].vencimento;
-                document.getElementById('modal-edicao').classList.remove('hidden');
-            }
-        }
+        const parcelasPagas = parcelas.filter(p => p.pago);
+        let valorRestanteAtual = parcelas.filter(p => !p.pago).reduce((acc, curr) => acc + curr.valor, 0);
 
-        function fecharModal() {
-            document.getElementById('modal-edicao').classList.add('hidden');
-        }
-
-        function salvarEdicao() {
-            const index = document.getElementById('modal-index').value;
-            const novoValor = parseFloat(document.getElementById('modal-valor').value);
-            const novoVencimento = document.getElementById('modal-vencimento').value.trim();
-
-            if (isNaN(novoValor) || novoValor <= 0 || novoVencimento === "") {
-                alert("Preencha os dados corretamente.");
+        // Se não houver saldo pendente no sistema, solicita o montante desejado ao usuário
+        if (valorRestanteAtual <= 0) {
+            const inputValor = prompt("Informe o valor total para gerar as parcelas (R$):", VALOR_TOTAL_BASE);
+            if (!inputValor) return;
+            
+            valorRestanteAtual = parseFloat(inputValor.replace(',', '.'));
+            if (isNaN(valorRestanteAtual) || valorRestanteAtual <= 0) {
+                alert("Valor inválido.");
                 return;
             }
+        }
 
-            parcelas[index].valor = novoValor;
-            parcelas[index].vencimento = novoVencimento;
+        const valorCalculado = Math.floor((valorRestanteAtual / qtdInput) * 100) / 100;
+        let somaAcumulada = 0;
+        const novasParcelasAbertas = [];
+
+        const hoje = new Date();
+        const mesInicial = hoje.getMonth();
+        const anoInicial = hoje.getFullYear();
+
+        for (let i = 1; i <= qtdInput; i++) {
+            let valorDaParcela = valorCalculado;
+            if (i === qtdInput) {
+                valorDaParcela = Math.round((valorRestanteAtual - somaAcumulada) * 100) / 100;
+            } else {
+                somaAcumulada += valorCalculado;
+            }
+
+            let dataVencimento = new Date(anoInicial, mesInicial + i, 1);
+            const dia = String(dataVencimento.getDate()).padStart(2, '0');
+            const mes = String(dataVencimento.getMonth() + 1).padStart(2, '0');
+            const ano = dataVencimento.getFullYear();
+
+            novasParcelasAbertas.push({
+                numero: parcelasPagas.length + i,
+                valor: valorDaParcela,
+                vencimento: `${dia}/${mes}/${ano}`,
+                pago: false,
+                dataPagamento: null
+            });
+        }
+
+        parcelas = [...parcelasPagas, ...novasParcelasAbertas];
+        parcelas.forEach((p, index) => p.numero = index + 1);
+
+        salvarNoStorage();
+        renderizar();
+    }
+
+    function alternarStatus(numero, event) {
+        if (event) event.stopPropagation();
+        const index = parcelas.findIndex(p => p.numero === numero);
+        if (index !== -1) {
+            parcelas[index].pago = !parcelas[index].pago;
+            
+            if (parcelas[index].pago) {
+                const agora = new Date();
+                const dia = String(agora.getDate()).padStart(2, '0');
+                const mes = String(agora.getMonth() + 1).padStart(2, '0');
+                const ano = agora.getFullYear();
+                const hora = String(agora.getHours()).padStart(2, '0');
+                const minuto = String(agora.getMinutes()).padStart(2, '0');
+                parcelas[index].dataPagamento = `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+            } else {
+                parcelas[index].dataPagamento = null;
+            }
 
             salvarNoStorage();
             renderizar();
-            fecharModal();
+        }
+    }
+
+    function abrirModal(numero) {
+        const index = parcelas.findIndex(p => p.numero === numero);
+        if (index !== -1) {
+            document.getElementById('modal-index').value = index;
+            document.getElementById('modal-titulo-num').innerText = numero.toString().padStart(2, '0');
+            document.getElementById('modal-valor').value = parcelas[index].valor;
+            document.getElementById('modal-vencimento').value = parcelas[index].vencimento;
+            document.getElementById('modal-edicao').classList.remove('hidden');
+        }
+    }
+
+    function abrirModalRestante() {
+        const restante = parcelas.filter(p => !p.pago).reduce((acc, curr) => acc + curr.valor, 0);
+        document.getElementById('input-modal-restante').value = restante.toFixed(2);
+        document.getElementById('modal-restante').classList.remove('hidden');
+    }
+
+    function fecharModal(idModal) {
+        document.getElementById(idModal).classList.add('hidden');
+    }
+
+    function salvarEdicao() {
+        const index = document.getElementById('modal-index').value;
+        const novoValor = parseFloat(document.getElementById('modal-valor').value);
+        const novoVencimento = document.getElementById('modal-vencimento').value.trim();
+
+        if (isNaN(novoValor) || novoValor <= 0 || novoVencimento === "") {
+            alert("Preencha os dados corretamente.");
+            return;
         }
 
-        function formatarMoeda(valor) {
-            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        parcelas[index].valor = novoValor;
+        parcelas[index].vencimento = novoVencimento;
+
+        salvarNoStorage();
+        renderizar();
+        fecharModal('modal-edicao');
+    }
+
+    function salvarNovoRestante() {
+        const novoRestante = parseFloat(document.getElementById('input-modal-restante').value);
+        if (isNaN(novoRestante) || novoRestante < 0) {
+            alert("Digite um valor válido.");
+            return;
         }
 
-        function atualizarResumos() {
-            const pagas = parcelas.filter(p => p.pago).length;
-            const total = parcelas.length;
-            const restante = parcelas.filter(p => !p.pago).reduce((acc, curr) => acc + curr.valor, 0);
-
-            document.getElementById('total-pagas').innerText = `${pagas}/${total}`;
-            document.getElementById('valor-restante').innerText = formatarMoeda(restante);
-
-            const porcentagem = Math.round((pagas / total) * 100) || 0;
-            document.getElementById('barra-progresso').style.width = `${porcentagem}%`;
-            document.getElementById('texto-progresso').innerText = `${porcentagem}% concluído`;
-            
-            document.getElementById('input-qtd-parcelas').value = total;
+        const parcelasAbertas = parcelas.filter(p => !p.pago);
+        
+        // Se a lista estiver vazia e tentar usar a modal de alterar restante
+        if (parcelasAbertas.length === 0) {
+            alert("Não há parcelas pendentes para recalcular.");
+            fecharModal('modal-restante');
+            return;
         }
 
-        function renderizar() {
-            const container = document.getElementById('lista-parcelas');
-            container.innerHTML = '';
+        const valorCalculado = Math.floor((novoRestante / parcelasAbertas.length) * 100) / 100;
+        let acumulado = 0;
 
-            parcelas.forEach(p => {
-                const card = document.createElement('div');
-                card.className = `glass-card p-3.5 rounded-2xl flex items-center justify-between transition-all duration-300 border-l-4 h-[76px] shrink-0 ${
-                    p.pago ? 'border-l-emerald-500 opacity-75' : 'border-l-indigo-500/40 hover:border-l-indigo-400'
-                }`;
+        parcelasAbertas.forEach((p, index) => {
+            if (index === parcelasAbertas.length - 1) {
+                p.valor = Math.round((novoRestante - acumulado) * 100) / 100;
+            } else {
+                p.valor = valorCalculado;
+                acumulado += valorCalculado;
+            }
+        });
 
-                card.innerHTML = `
-                    <div class="flex items-center gap-4 flex-1 min-w-0 cursor-pointer" onclick="abrirModal(${p.numero})">
-                        <div class="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center font-bold text-sm select-none ${
-                            p.pago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'
-                        }">
-                            ${p.numero.toString().padStart(2, '0')}
-                        </div>
-                        
-                        <div class="flex-1 min-w-0">
-                            <span class="font-bold text-base sm:text-lg text-slate-100 block leading-tight">${formatarMoeda(p.valor)}</span>
-                            
-                            <div class="flex flex-col gap-1 text-[11px] text-slate-400 mt-0.5 whitespace-nowrap overflow-hidden">
-                                <div class="flex items-center gap-1.5 leading-none">
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0 text-slate-500"></i> 
-                                    <span class="font-medium text-slate-300">${p.vencimento}</span>
-                                </div>
-                                ${p.pago && p.dataPagamento ? `
-                                <div class="flex items-center gap-1.5 text-emerald-400 font-medium leading-none">
-                                    <i data-lucide="calendar-check" class="w-3.5 h-3.5 shrink-0"></i> 
-                                    <span class="font-semibold text-emerald-300">${p.dataPagamento}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                        </div>
+        salvarNoStorage();
+        renderizar();
+        fecharModal('modal-restante');
+    }
+
+    function formatarMoeda(valor) {
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function atualizarResumos() {
+        const pagas = parcelas.filter(p => p.pago).length;
+        const total = parcelas.length;
+        const restante = parcelas.filter(p => !p.pago).reduce((acc, curr) => acc + curr.valor, 0);
+
+        const elPagas = document.getElementById('total-pagas');
+        const elRestante = document.getElementById('valor-restante');
+        const elBarra = document.getElementById('barra-progresso');
+        const elTextoProgresso = document.getElementById('texto-progresso');
+
+        if (elPagas) elPagas.innerText = `${pagas}/${total}`;
+        if (elRestante) elRestante.innerText = formatarMoeda(restante);
+
+        const porcentagem = total > 0 ? Math.round((pagas / total) * 100) : 0;
+        if (elBarra) elBarra.style.width = `${porcentagem}%`;
+        if (elTextoProgresso) elTextoProgresso.innerText = `${porcentagem}% concluído`;
+    }
+
+    function renderizar() {
+        const container = document.getElementById('lista-parcelas');
+        if (!container) return;
+        
+        container.innerHTML = '';
+
+        if (parcelas.length === 0) {
+            container.innerHTML = `<p class="text-center text-slate-500 py-8 text-xs">Nenhuma parcela cadastrada.</p>`;
+            atualizarResumos();
+            return;
+        }
+
+        parcelas.forEach(p => {
+            const card = document.createElement('div');
+            card.className = `glass-card p-3.5 rounded-2xl flex items-center justify-between transition-all duration-300 border-l-4 h-[76px] shrink-0 ${
+                p.pago ? 'border-l-emerald-500 opacity-75' : 'border-l-indigo-500/40 hover:border-l-indigo-400'
+            }`;
+
+            card.innerHTML = `
+                <div class="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onclick="abrirModal(${p.numero})">
+                    <div class="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center font-bold text-sm select-none ${
+                        p.pago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'
+                    }">
+                        ${p.numero.toString().padStart(2, '0')}
                     </div>
                     
-                    <div class="ml-2 shrink-0 flex items-center">
-                        <button onclick="alternarStatus(${p.numero}, event)" class="cursor-pointer px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 shadow-sm flex items-center gap-1.5 ${
-                            p.pago 
-                            ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30' 
-                            : 'bg-slate-800 text-slate-300 hover:bg-indigo-600 hover:text-white border border-slate-700/80 hover:border-indigo-500'
-                        }">
-                            <i data-lucide="${p.pago ? 'check-square' : 'square'}" class="w-4 h-4"></i>
-                            <span>${p.pago ? 'Pago' : 'Marcar'}</span>
-                        </button>
+                    <div class="flex-1 min-w-0">
+                        <span class="font-bold text-base sm:text-lg text-slate-100 block leading-tight">${formatarMoeda(p.valor)}</span>
+                        
+                        <div class="flex flex-col gap-1 text-[11px] text-slate-400 mt-0.5 whitespace-nowrap overflow-hidden">
+                            <div class="flex items-center gap-1.5 leading-none">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0 text-slate-500"></i> 
+                                <span class="font-medium text-slate-300">${p.vencimento}</span>
+                            </div>
+                            ${p.pago && p.dataPagamento ? `
+                            <div class="flex items-center gap-1.5 text-emerald-400 font-medium leading-none">
+                                <i data-lucide="calendar-check" class="w-3.5 h-3.5 shrink-0"></i> 
+                                <span class="font-semibold text-emerald-300">${p.dataPagamento}</span>
+                            </div>
+                            ` : ''}
+                        </div>
                     </div>
-                `;
+                </div>
+                
+                <div class="ml-2 shrink-0 flex items-center gap-2">
+                    <button onclick="alternarStatus(${p.numero}, event)" class="cursor-pointer px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 shadow-sm flex items-center gap-1.5 ${
+                        p.pago 
+                        ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30' 
+                        : 'bg-slate-800 text-slate-300 hover:bg-indigo-600 hover:text-white border border-slate-700/80 hover:border-indigo-500'
+                    }">
+                        <i data-lucide="${p.pago ? 'check-square' : 'square'}" class="w-4 h-4"></i>
+                        <span>${p.pago ? 'Pago' : 'Marcar'}</span>
+                    </button>
+                    
+                    <button onclick="excluirParcela(${p.numero}, event)" title="Excluir Parcela" class="cursor-pointer p-2 rounded-xl bg-slate-800/80 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-700/60 hover:border-rose-500/30 transition-all">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
 
-                container.appendChild(card);
-            });
+            container.appendChild(card);
+        });
 
-            atualizarResumos();
+        atualizarResumos();
+        if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
+    }
 
-        renderizar();
-    </script>
+    carregarDadosIniciais();
+    renderizar();
+</script>
+
+
 </body>
 </html>
